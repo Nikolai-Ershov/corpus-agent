@@ -6,6 +6,3 @@ class Adapter(ABC):
     @abstractmethod
     def parse(self, raw) -> list[Record]:
         pass
-
-
-
