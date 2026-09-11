@@ -11,8 +11,3 @@ class Record:
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     origin_ref: str = ""
     metadata: dict = field(default_factory=dict)
-
-
-
-
-

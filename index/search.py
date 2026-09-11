@@ -24,15 +24,3 @@ def search(query: str, chunks: list, k: int, embedder):
     sorted_result = sorted(result, key=lambda x: x[1], reverse=True)[:k]
 
     return sorted_result
-
-
-
-
-
-
-
-
-
-
-
-
