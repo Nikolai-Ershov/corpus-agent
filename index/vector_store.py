@@ -23,7 +23,7 @@ class VectorStore:
 
     def load(self, file: str):
         try:
-            with open(file, "r") as f:
+            with open(file, "r", encoding="utf-8") as f:
                 self.chunks = json.load(f)
         except FileNotFoundError:
             self.chunks = []

@@ -18,9 +18,17 @@ def search(query: str, chunks: list, k: int, embedder):
 
     result = []
     for inf in chunks:
-        res = (inf["text"], cos(query_vec, inf["vector"]))
-        result.append(res)
+        score = cos(query_vec, inf["vector"])
 
-    sorted_result = sorted(result, key=lambda x: x[1], reverse=True)[:k]
+        chunks_dict = {
+            "chunk_id": inf["chunk_id"],
+            "record_id": inf["record_id"],
+            "text": inf["text"],
+            "score": float(score)
+        }
+
+        result.append(chunks_dict)
+
+    sorted_result = sorted(result, key=lambda x: x["score"], reverse=True)[:k]
 
     return sorted_result
