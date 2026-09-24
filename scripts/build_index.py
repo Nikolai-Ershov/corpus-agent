@@ -1,3 +1,6 @@
+import os
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 from index.vector_store import VectorStore
 from index.embed import Embedder
 from index.chunk import chunk
@@ -7,7 +10,7 @@ embedder = Embedder()
 vector_store = VectorStore()
 adapter = PlaintextAdapter()
 
-records = adapter.parse("data/notes")
+records = adapter.parse("data/notes") + adapter.parse("data/base")
 
 
 def run(path):

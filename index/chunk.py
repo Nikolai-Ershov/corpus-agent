@@ -8,14 +8,3 @@ def chunk(text: str) -> list[str]:
             res.append(part.strip())
 
     return res
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,6 @@
+import os
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 from index.embed import Embedder
 from index.vector_store import VectorStore
 from mcp.server.mcpserver import MCPServer
@@ -11,7 +14,7 @@ mcp = MCPServer("corpus-agent")
 
 
 @mcp.tool()
-def search_corpus(query: str, k: int = 5):
+def search_corpus(query: str, k: int = 3):
     """Searches for semantically relevant fragments in the user's personal notes.
 
     Always use this when the user asks to find, recall, or clarify any
@@ -27,7 +30,8 @@ def search_corpus(query: str, k: int = 5):
     return result
 
 
-
+if __name__ == "__main__":
+    mcp.run()
 
 
 

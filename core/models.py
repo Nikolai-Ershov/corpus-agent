@@ -6,7 +6,6 @@ import uuid
 @dataclass
 class Record:
     content: str
-    source: str
     timestamp: datetime
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
     origin_ref: str = ""
