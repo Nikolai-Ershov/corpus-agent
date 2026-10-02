@@ -1,10 +1,10 @@
 import os
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 from index.vector_store import VectorStore
 from index.embed import Embedder
 from index.chunk import chunk
 from ingestion.plaintext import PlaintextAdapter
-
-os.environ["HF_HUB_OFFLINE"] = "1"
 
 embedder = Embedder()
 vector_store = VectorStore()
