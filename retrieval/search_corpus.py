@@ -1,4 +1,5 @@
 import os
+import logging
 os.environ["HF_HUB_OFFLINE"] = "1"
 
 from index.embed import Embedder
@@ -6,10 +7,16 @@ from index.vector_store import VectorStore
 from mcp.server.mcpserver import MCPServer
 from index.search import search
 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s %(name)s: %(message)s",
+)
+
 embedder = Embedder()
 vector_store = VectorStore()
-vector_store.load("data/corpus_index.json")
 
+vector_store.load("data/corpus_index.json")
 mcp = MCPServer("corpus-agent")
 
 
@@ -26,6 +33,10 @@ def search_corpus(query: str, k: int = 3):
     :return: a list of k dicts (chunk_id, record_id, text, score),
         sorted by descending similarity to the query
     """
+
+    if not vector_store.chunks:
+        raise RuntimeError("Knowledge base failed to load and is currently empty.")
+
     result = search(query, vector_store.chunks, k, embedder)
     return result
 
