@@ -1,16 +1,19 @@
 import json
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class VectorStore:
     def __init__(self):
         self.chunks = []
 
-    def add(self, record_id, text, vector):
+    def add(self, origin_ref, text, vector):
 
         chunk_data = {
             "chunk_id": str(uuid.uuid4()),
-            "record_id": record_id,
+            "origin_ref": origin_ref,
             "text": text,
             "vector": vector.tolist()
         }
@@ -26,9 +29,10 @@ class VectorStore:
             with open(file, "r", encoding="utf-8") as f:
                 self.chunks = json.load(f)
         except FileNotFoundError:
+            logger.warning("Corpus index file not found at %s — starting with empty chunk list.", file)
             self.chunks = []
         except json.JSONDecodeError:
-            print("Warning: data file is corrupted. Starting with empty list.")
+            logger.error("Corpus index file at %s is corrupted (invalid JSON) — starting with empty chunk list.", file)
             self.chunks = []
 
 
