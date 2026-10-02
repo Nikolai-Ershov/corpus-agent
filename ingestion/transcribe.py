@@ -3,10 +3,10 @@ from faster_whisper import WhisperModel
 
 class Transcriber:
     def __init__(self):
-        self.model = WhisperModel("small", device="cpu", compute_type="int8")
+        self.model = WhisperModel("large-v3", device="cpu", compute_type="int8")
 
     def transcribe(self, path: str) -> str:
-        segments, info = self.model.transcribe(path)
+        segments, info = self.model.transcribe(path, language="ru", vad_filter=True)
 
         words_per_chunk = 150
         paragraphs = []
