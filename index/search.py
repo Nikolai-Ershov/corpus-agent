@@ -22,7 +22,7 @@ def search(query: str, chunks: list, k: int, embedder):
 
         chunks_dict = {
             "chunk_id": inf["chunk_id"],
-            "record_id": inf["record_id"],
+            "origin_ref": inf["origin_ref"],
             "text": inf["text"],
             "score": float(score)
         }
