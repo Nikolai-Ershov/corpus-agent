@@ -30,7 +30,7 @@ def search_corpus(query: str, k: int = 3):
 
     :param query: the user's question or topic to search for
     :param k: how many of the most relevant fragments to return
-    :return: a list of k dicts (chunk_id, record_id, text, score),
+    :return: a list of k dicts (chunk_id, origin_ref, text, score),
         sorted by descending similarity to the query
     """
 
