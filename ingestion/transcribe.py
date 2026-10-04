@@ -5,8 +5,9 @@ class Transcriber:
     def __init__(self):
         self.model = WhisperModel("large-v3", device="cpu", compute_type="int8")
 
-    def transcribe(self, path: str) -> str:
+    def transcribe(self, path: str):
         segments, info = self.model.transcribe(path, language="ru", vad_filter=True)
+        total = info.duration
 
         words_per_chunk = 150
         paragraphs = []
@@ -16,11 +17,8 @@ class Transcriber:
             current_words.extend(segment.text.strip().split())
 
             if len(current_words) >= words_per_chunk:
-                paragraphs.append(" ".join(current_words))
+                yield " ".join(current_words), segment.end / total
                 current_words = []
 
         if current_words:
-            paragraphs.append(" ".join(current_words))
-
-        text = "\n\n".join(paragraphs)
-        return text
+            yield " ".join(current_words), 1.0
