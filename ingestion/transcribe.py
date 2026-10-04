@@ -6,11 +6,15 @@ class Transcriber:
         self.model = WhisperModel("large-v3", device="cpu", compute_type="int8")
 
     def transcribe(self, path: str):
-        segments, info = self.model.transcribe(path, language="ru", vad_filter=True)
+        segments, info = self.model.transcribe(
+            path,
+            language="ru",
+            vad_filter=True,
+            condition_on_previous_text=False,
+        )
         total = info.duration
 
         words_per_chunk = 150
-        paragraphs = []
         current_words = []
 
         for segment in segments:
