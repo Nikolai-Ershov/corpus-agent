@@ -36,4 +36,8 @@ def run(media_path: str) -> None:
 
 
 if __name__ == "__main__":
-    run(sys.argv[1])
+    for media_path in sys.argv[1:]:
+        try:
+            run(media_path)
+        except Exception as e:
+            print(f"\nFAILED {media_path}: {type(e).__name__}: {e}")
