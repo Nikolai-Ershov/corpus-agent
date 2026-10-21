@@ -8,19 +8,24 @@ from mcp import Client, StdioServerParameters
 import openai
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
-
 from agent.agent_loop import run_agent_turn, SYSTEM_PROMPT
 
 load_dotenv()
+
+
 logging.basicConfig(
     filename="tg_interface/bot.log",
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    encoding="utf-8",
 )
-logger = logging.getLogger(__name__)
 
+logging.getLogger("httpcore").setLevel(logging.WARNING)
 logging.getLogger("httpx").setLevel(logging.WARNING)
-logging.getLogger("tg_interface").setLevel(logging.WARNING)
+logging.getLogger("openai").setLevel(logging.WARNING)
+logging.getLogger("telegram").setLevel(logging.WARNING)
+logging.getLogger("mcp").setLevel(logging.WARNING)
+
 
 server_params = StdioServerParameters(
     command="C:\\Users\\nickg\\PycharmProjects\\corpus-agent\\venv\\Scripts\\python.exe",
