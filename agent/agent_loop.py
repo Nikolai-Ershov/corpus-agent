@@ -1,4 +1,5 @@
 import json
+import os
 import openai
 import logging
 
@@ -16,7 +17,7 @@ async def run_agent_turn(user_text, messages, llm_client, openai_tools, mcp_clie
     while True:
         try:
             response = llm_client.chat.completions.create(
-                model="gpt-5.6-luna",
+                model=os.environ.get("LLM_MODEL"),
                 messages=messages,
                 tools=openai_tools,
                 reasoning_effort="none",

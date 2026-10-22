@@ -26,6 +26,7 @@ logging.getLogger("openai").setLevel(logging.WARNING)
 logging.getLogger("telegram").setLevel(logging.WARNING)
 logging.getLogger("mcp").setLevel(logging.WARNING)
 
+logger = logging.getLogger(__name__)
 
 server_params = StdioServerParameters(
     command="C:\\Users\\nickg\\PycharmProjects\\corpus-agent\\venv\\Scripts\\python.exe",
@@ -38,6 +39,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "Привет! Я твой личный ассистент по базе знаний. Спрашивай что угодно."
     )
+
+MAX_MESSAGE_LENGTH = 4000
+
+
+async def send_long_message(update: Update, text: str) -> None:
+    """Telegram caps messages at 4096 chars — split longer answers into chunks."""
+    for i in range(0, len(text), MAX_MESSAGE_LENGTH):
+        await update.message.reply_text(text[i:i + MAX_MESSAGE_LENGTH])
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -65,11 +74,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Связь с моделью прервалась. Попробуй ещё раз.")
         return
 
-    await update.message.reply_text(answer)
+    except Exception:
+        # Intentionally broad: this is the last line of defense before
+        # replying to the user — any unhandled error here must still
+        # produce a reply instead of silently leaving them without an answer.
+        logger.exception("Failed to handle message")
+        await update.message.reply_text("Что-то пошло не так, попробуй ещё раз.")
+        return
+
+    await send_long_message(update, answer)
 
 
 async def main():
-    llm_client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    llm_client = openai.OpenAI(
+        api_key=os.environ.get("LLM_API_KEY"),
+        base_url=os.environ.get("LLM_BASE_URL"),
+    )
 
     token = os.environ.get("TELEGRAM_BOT_TOKEN")
     if not token:

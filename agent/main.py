@@ -22,7 +22,10 @@ server_params = StdioServerParameters(
 
 
 async def main():
-    llm_client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    llm_client = openai.OpenAI(
+        api_key=os.environ.get("LLM_API_KEY"),
+        base_url=os.environ.get("LLM_BASE_URL"),
+    )
 
     async with Client(server_params) as mcp_client:
         tools_result = await mcp_client.list_tools()
