@@ -1,6 +1,12 @@
+"""Run agent_loop.py directly in the terminal, with no frontend."""
+
 import asyncio
 import logging
 import os
+
+# must happen before Client(server_params) below spawns the search_corpus
+# subprocess — it inherits the parent's env at spawn time
+os.environ["HF_HUB_OFFLINE"] = "1"
 
 from dotenv import load_dotenv
 from mcp import Client, StdioServerParameters
@@ -9,6 +15,8 @@ import openai
 from agent.agent_loop import run_agent_turn, SYSTEM_PROMPT
 
 load_dotenv()
+
+# no filename — logs go straight to the console, that's the point of this script
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s %(name)s: %(message)s",
@@ -41,6 +49,8 @@ async def main():
                 }
             })
 
+        # one shared list for the whole run — unlike telegram_bot.py, there's
+        # only one user here, so there's nothing to keep separate by chat_id
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
         while True:

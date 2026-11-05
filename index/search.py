@@ -1,34 +1,46 @@
-import math
+"""Vector search over the corpus index using cosine similarity."""
 
 
-def cos(vec1, vec2):
-    scalar = sum(x * y for x, y in zip(vec1, vec2))
+import numpy as np
 
-    vec1_length = math.sqrt(sum(i ** 2 for i in vec1))
-    vec2_length = math.sqrt(sum(i ** 2 for i in vec2))
 
-    vec_length = vec1_length * vec2_length
-    result = scalar / vec_length
+def cos(query_vec, matrix):
+    """Cosine similarity between one query vector and every row (chunk)
+    in `matrix` at once — vectorized so it scores all chunks in a single
+    matrix multiply instead of looping per chunk."""
 
+    scalar = matrix @ query_vec
+
+    query_length = np.linalg.norm(query_vec)
+    matrix_lengths = np.linalg.norm(matrix, axis=1)
+
+    result = scalar / (matrix_lengths * query_length)
     return result
 
 
 def search(query: str, chunks: list, k: int, embedder):
+    """Embed the query, score it against every chunk, return the top k
+    matches sorted by score (highest first)."""
+
     query_vec = embedder.embed(query)
 
+    vectors = [inf["vector"] for inf in chunks]
+    matrix = np.asarray(vectors)  # cos() needs a numpy array to do the matrix multiply
+
+    scores = cos(query_vec, matrix)
+
+    # argsort gives ascending order; take the last k (highest scores),
+    # then reverse so index 0 is the best match
+    top_k_indices = np.argsort(scores)[-k:][::-1]
+
     result = []
-    for inf in chunks:
-        score = cos(query_vec, inf["vector"])
+    for i in top_k_indices:
+        i = int(i)  # numpy.int64 → plain int, so it indexes chunks[] cleanly
+        result.append({
+            "chunk_id": chunks[i]["chunk_id"],
+            "origin_ref": chunks[i]["origin_ref"],
+            "text": chunks[i]["text"],
+            "score": float(scores[i]),
+        })
 
-        chunks_dict = {
-            "chunk_id": inf["chunk_id"],
-            "origin_ref": inf["origin_ref"],
-            "text": inf["text"],
-            "score": float(score)
-        }
-
-        result.append(chunks_dict)
-
-    sorted_result = sorted(result, key=lambda x: x["score"], reverse=True)[:k]
-
-    return sorted_result
+    return result
