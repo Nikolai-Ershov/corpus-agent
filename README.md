@@ -41,8 +41,20 @@ flowchart TD
 
 The two pipelines only meet at `corpus_index.json`: the indexing side builds it, the runtime side reads it. Nothing else connects them.
 
+## Project structure
 
 
+## Design goals & roadmap
 
-
-
+| Goal | Status |
+|---|---|
+| **Precise fact extraction** — answer a specific factual question (e.g. "how many mg of X should I take") by pulling the exact relevant note |  Working — this is what top-k semantic search over chunks is good at |
+| **Generalization** — synthesize a position across many notes, compare differing opinions, not just quote one chunk | Not solved yet — single-query top-k retrieval gives a few locally relevant chunks, not a synthesis across the whole corpus. Needs a different retrieval strategy (multiple queries, or a map-reduce pass over many chunks) |
+| Evaluation harness (measure retrieval/answer quality against a known set of questions) |  In progress |
+| Smarter chunking (sentence/topic-boundary aware, not pass-through word counting) |  Planned — next, after the eval baseline exists |
+| Vector store beyond flat JSON |  Planned — Qdrant, once this is containerized |
+| Score-based cutoff on search results (currently fixed top-k regardless of relevance) |  Planned |
+| Containerized / deployed to a VPS |  Planned |
+| Persistent conversation history |  Dropped — actual usage is one-off lookups, not long threads |
+| Bring-your-own-corpus (configurable paths, generic prompt) |  Not a goal — this is a pet project, not a multi-tenant tool |
+| LLM provider finalized |  Undecided (OpenAI-compatible / Grok) |
