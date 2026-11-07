@@ -15,7 +15,7 @@ A pet project, built mainly out of curiosity, to get hands-on with:
 
 ## What it does
 
-An AI agent with a Telegram interface that answers questions against a personal knowledge base. The knowledge base is a collection of notes on a wide range of topics, mostly hormonal health, general health, and nutrition — sourced from a Telegram channel covering those subjects, and mostly converted from audio to text via transcription. [~X GB of raw notes.]
+An AI agent with a Telegram interface that answers questions against a personal knowledge base. The knowledge base is a collection of notes on a wide range of topics, mostly hormonal health, general health, and nutrition — sourced from a Telegram channel covering those subjects, and mostly converted from audio to text via transcription.
 
 To retrieve from the knowledge base, the agent calls an MCP tool, `search_corpus`, which is the actual RAG pipeline underneath.
 
